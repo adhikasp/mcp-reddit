@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/adhikasp-mcp-reddit-badge.png)](https://mseep.ai/app/adhikasp-mcp-reddit)
+
 # MCP Reddit Server
 [![smithery badge](https://smithery.ai/badge/@adhikasp/mcp-reddit)](https://smithery.ai/server/@adhikasp/mcp-reddit)
 
