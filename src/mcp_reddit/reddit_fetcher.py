@@ -1,20 +1,44 @@
+import logging
 import os
 from typing import Optional
-from redditwarp.ASYNC import Client
-from redditwarp.models.submission_ASYNC import LinkPost, TextPost, GalleryPost
+
 from fastmcp import FastMCP
-import logging
+from redditwarp.ASYNC import Client
+from redditwarp.models.submission_ASYNC import GalleryPost, LinkPost, TextPost
 
 mcp = FastMCP("Reddit MCP")
-
-REDDIT_CLIENT_ID=os.getenv("REDDIT_CLIENT_ID")
-REDDIT_CLIENT_SECRET=os.getenv("REDDIT_CLIENT_SECRET")
-REDDIT_REFRESH_TOKEN=os.getenv("REDDIT_REFRESH_TOKEN")
-
-CREDS = [x for x in [REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, REDDIT_REFRESH_TOKEN] if x]
-
-client = Client(*CREDS)
 logging.getLogger().setLevel(logging.WARNING)
+logger = logging.getLogger(__name__)
+
+_REDDIT_AUTH_ENV_VARS = (
+    "REDDIT_CLIENT_ID",
+    "REDDIT_CLIENT_SECRET",
+    "REDDIT_REFRESH_TOKEN",
+)
+
+
+def _create_client(factory: type[Client] = Client) -> Client:
+    """Create a Reddit client, handling optional credential configuration."""
+
+    env_values = {name: os.getenv(name) for name in _REDDIT_AUTH_ENV_VARS}
+    if all(env_values.values()):
+        return factory(
+            env_values["REDDIT_CLIENT_ID"],
+            env_values["REDDIT_CLIENT_SECRET"],
+            env_values["REDDIT_REFRESH_TOKEN"],
+        )
+
+    if any(env_values.values()):
+        missing = [name for name, value in env_values.items() if not value]
+        logger.warning(
+            "Incomplete Reddit credentials supplied (%s missing); using unauthenticated client.",
+            ", ".join(missing),
+        )
+
+    return factory()
+
+
+client = _create_client()
 
 @mcp.tool()
 async def fetch_reddit_hot_threads(subreddit: str, limit: int = 10) -> str:
@@ -46,7 +70,7 @@ async def fetch_reddit_hot_threads(subreddit: str, limit: int = 10) -> str:
         return "\n\n".join(posts)
 
     except Exception as e:
-        logging.error(f"An error occurred: {str(e)}")
+        logger.error(f"An error occurred: {str(e)}")
         return f"An error occurred: {str(e)}"
 
 def _format_comment_tree(comment_node, depth: int = 0) -> str:
@@ -99,6 +123,7 @@ async def fetch_reddit_post_content(post_id: str, comment_limit: int = 20, comme
         return content
 
     except Exception as e:
+        logger.error(f"An error occurred: {str(e)}")
         return f"An error occurred: {str(e)}"
 
 def _get_post_type(submission) -> str:
