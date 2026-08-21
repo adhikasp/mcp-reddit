@@ -1,5 +1,5 @@
 # MCP Reddit Server
-[![smithery badge](https://smithery.ai/badge/@adhikasp/mcp-reddit)](https://smithery.ai/server/@adhikasp/mcp-reddit)
+[![Listed on Skillselion](https://skillselion.com/badge/mcp/tool/io.github.adhikasp/mcp-reddit.svg)](https://skillselion.com/mcp/tool/io.github.adhikasp/mcp-reddit)
 
 A [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) server that provides tools for fetching and analyzing Reddit content.
 
