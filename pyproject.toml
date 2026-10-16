@@ -8,6 +8,7 @@ dependencies = [
     "dnspython>=2.7.0",
     "praw>=7.8.1",
     "redditwarp>=1.3.0",
+    "httpx>=0.28",
     "fastmcp>=0.1.0",
     "uvicorn",
 ]
